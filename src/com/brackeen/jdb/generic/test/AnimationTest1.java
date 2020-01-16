@@ -1,30 +1,34 @@
-package com.brackeen.jdb.graphics.test;
+package com.brackeen.jdb.generic.test;
 
+import com.brackeen.jdb.generic.SimpleScreenManager;
 import com.brackeen.jdb.graphics.Animation;
-import com.brackeen.jdb.graphics.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class AnimationTest2 {
+public class AnimationTest1 {
 
     public static void main(String[] args) {
-        AnimationTest2 test = new AnimationTest2();
-        test.run();
-    }
 
-    private static final DisplayMode[] POSSIBLE_MODES = {
-            new DisplayMode(800, 600, 32, 0),
-            new DisplayMode(800, 600, 24, 0),
-            new DisplayMode(800, 600, 16, 0),
-            new DisplayMode(640, 480, 32, 0),
-            new DisplayMode(640, 480, 24, 0),
-            new DisplayMode(640, 480, 16, 0)
-    };
+        DisplayMode displayMode;
+
+        if (args.length == 3) {
+            displayMode = new DisplayMode(
+                    Integer.parseInt(args[0]),
+                    Integer.parseInt(args[1]),
+                    Integer.parseInt(args[2]),
+                    DisplayMode.REFRESH_RATE_UNKNOWN);
+        } else {
+            displayMode = new DisplayMode(800, 600, 16, DisplayMode.REFRESH_RATE_UNKNOWN);
+        }
+
+        AnimationTest1 test = new AnimationTest1();
+        test.run(displayMode);
+    }
 
     private static final long DEMO_TIME = 5000;
 
-    private ScreenManager screen;
+    private SimpleScreenManager screen;
     private Image bgImage;
     private Animation anim;
 
@@ -49,11 +53,10 @@ public class AnimationTest2 {
         return new ImageIcon(fileName).getImage();
     }
 
-    public void run() {
-        screen = new ScreenManager();
+    public void run(DisplayMode displayMode) {
+        screen = new SimpleScreenManager();
         try {
-            DisplayMode displayMode = screen.findFirstCompatibleMode(POSSIBLE_MODES);
-            screen.setFullScreen(displayMode);
+            screen.setFullScreen(displayMode, new JFrame());
             loadImages();
             animationLoop();
         } finally {
@@ -72,11 +75,10 @@ public class AnimationTest2 {
             // update animation
             anim.update(elapsedTime);
 
-            // draw and update screen
-            Graphics2D g = screen.getGraphics();
+            // draw to screen
+            Graphics g = screen.getFullScreenWindow().getGraphics();
             draw(g);
             g.dispose();
-            screen.update();
 
             // take a nap
             try {
@@ -88,9 +90,9 @@ public class AnimationTest2 {
 
     public void draw(Graphics g) {
         // draw background
-        g.drawImage(bgImage, 0, 0, screen.getWidth(), screen.getHeight(), null);
+        g.drawImage(bgImage, 0, 0, null);
 
-        // draw frame
+        // draw frames
         g.drawImage(anim.getImage(), 0, 0, null);
     }
 

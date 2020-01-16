@@ -1,4 +1,4 @@
-package com.brackeen.jdb.graphics.test;
+package com.brackeen.jdb.generic.test;
 
 import com.brackeen.jdb.graphics.Animation;
 import com.brackeen.jdb.graphics.ScreenManager;
